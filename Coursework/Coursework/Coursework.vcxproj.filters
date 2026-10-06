@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\Light">
+      <UniqueIdentifier>{8e6819f9-60e4-440a-b15f-854863caf053}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Height Map">
+      <UniqueIdentifier>{b6270251-32f0-4e1d-9816-62a944adfbd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shaders">
+      <UniqueIdentifier>{2bd38c43-f6f8-4bd3-99c5-4f6a078c5ce8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shaders">
+      <UniqueIdentifier>{41c298c3-65e2-48ff-9d0e-27408870d1d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Waves">
+      <UniqueIdentifier>{47e30428-0b33-487a-8774-ae2ae5e77e64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shadows">
+      <UniqueIdentifier>{4d8a5954-5ff2-4166-903d-56ccc1628846}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Bloom">
+      <UniqueIdentifier>{0f573ffb-8d1c-4a3a-bc07-e6d84ecd05be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Depth">
+      <UniqueIdentifier>{8916484f-45d5-4414-8992-beca4dd8dbec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Texture">
+      <UniqueIdentifier>{48e9020b-e211-4282-9f3c-f9edff882eae}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="App1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HeightShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="LightShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="VertBlurShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="HorizBlurShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="TexShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="BrightShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleShadowShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="LightShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="VertBlurShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="HorizBlurShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="TexShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="BrightShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleShadowShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="light_ps.hlsl">
+      <Filter>Resource Files\Light</Filter>
+    </FxCompile>
+    <FxCompile Include="light_vs.hlsl">
+      <Filter>Resource Files\Light</Filter>
+    </FxCompile>
+    <FxCompile Include="height_ps.hlsl">
+      <Filter>Resource Files\Height Map</Filter>
+    </FxCompile>
+    <FxCompile Include="height_vs.hlsl">
+      <Filter>Resource Files\Height Map</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\shadow_ps.hlsl">
+      <Filter>Resource Files\Shadows</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\shadow_vs.hlsl">
+      <Filter>Resource Files\Shadows</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\horizontalBlur_ps.hlsl">
+      <Filter>Resource Files\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\horizontalBlur_vs.hlsl">
+      <Filter>Resource Files\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\wave_ps.hlsl">
+      <Filter>Resource Files\Waves</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\wave_vs.hlsl">
+      <Filter>Resource Files\Waves</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\depth_ps.hlsl">
+      <Filter>Resource Files\Depth</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\depth_vs.hlsl">
+      <Filter>Resource Files\Depth</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\verticalBlur_ps.hlsl">
+      <Filter>Resource Files\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\verticalBlur_vs.hlsl">
+      <Filter>Resource Files\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\texture_ps.hlsl">
+      <Filter>Resource Files\Texture</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\texture_vs.hlsl">
+      <Filter>Resource Files\Texture</Filter>
+    </FxCompile>
+    <FxCompile Include="bright_ps.hlsl">
+      <Filter>Resource Files\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="bright_vs.hlsl">
+      <Filter>Resource Files\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="simpleShadow_ps.hlsl">
+      <Filter>Resource Files\Shadows</Filter>
+    </FxCompile>
+    <FxCompile Include="simpleShadow_vs.hlsl">
+      <Filter>Resource Files\Shadows</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
