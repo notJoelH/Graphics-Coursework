@@ -91,11 +91,14 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	// Generate shadow maps and corresponding SRVs based on numLights, and generate light spheres for visualization in debug mode
 	for (int i = 0; i < numLights; i++)
 	{
-		shadowMaps[i] = new ShadowMap(renderer->getDevice(), shadowMapSize, shadowMapSize);
+		if (light[i]->getLightType() != 1) // Only generate shadow maps if not a point light
+		{
+			shadowMaps[i] = new ShadowMap(renderer->getDevice(), shadowMapSize, shadowMapSize);
+		}
+
 		shadowSRVs[i] = nullptr;  // filled each frame in depthPass()
 		lightSphere[i] = new SphereMesh(renderer->getDevice(), renderer->getDeviceContext());
 	}
-
 
 	// ----- Assign Var Properties -----
 	camera->setPosition(0.0f, 10.0f, -10.0f);
@@ -137,13 +140,13 @@ App1::~App1()
 
 	for (int i = 0; i < MAX_LIGHTS; i++)
 	{
-		if (light[i]) { delete light[i];       light[i] = nullptr; }
+		if (light[i]) { delete light[i]; light[i] = nullptr; }
 		if (lightSphere[i]) { delete lightSphere[i]; lightSphere[i] = nullptr; }
 		if (shadowMaps[i]) { delete shadowMaps[i];  shadowMaps[i] = nullptr; }
 	}
 
 	if (screenTex) { delete screenTex; screenTex = nullptr; }
-	if (bTex) { delete bTex;      bTex = nullptr; }
+	if (bTex) { delete bTex; bTex = nullptr; }
 	if (dScaleTex) { delete dScaleTex; dScaleTex = nullptr; }
 	if (hBlurTex) { delete hBlurTex;  hBlurTex = nullptr; }
 	if (vBlurTex) { delete vBlurTex;  vBlurTex = nullptr; }
@@ -170,11 +173,11 @@ bool App1::render()
 
 	depthPass();
 	scenePass();
-	brightPass();
 
 	//Toggle Bloom effect
 	if (bloomToggle)
 	{
+		brightPass();
 		downScalePass();
 		horizontalBlurPass();
 		verticalBlurPass();
@@ -220,10 +223,6 @@ void App1::depthPass()
 		RenderObject(dShader, mountain, [=]() { dShader->setShaderParameters(dc, worldMatrix, lightView, lightProj, 
 			textureMgr->getTexture(L"mountain")); });
 
-		// Sun
-		worldMatrix = XMMatrixScaling(2.f, 2.f, 2.f) * XMMatrixTranslation(lightPos[0].x, lightPos[0].y, lightPos[0].z);
-		RenderObject(dShader, sun, [=]() { dShader->setShaderParameters(dc, worldMatrix, lightView, lightProj); });
-
 		// House
 		worldMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationRollPitchYaw(0.0f, 2.6f, 0.0f) * XMMatrixTranslation(22.f, 1.65f, 20.f);
 		RenderObject(dShader, house, [=]() { dShader->setShaderParameters(dc, worldMatrix, lightView, lightProj); });
@@ -250,8 +249,6 @@ void App1::scenePass()
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 	XMMATRIX viewMatrix = camera->getViewMatrix();
 	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
-	XMMATRIX lightViewMatrix = light[0]->getViewMatrix();
-	XMMATRIX lightProjectionMatrix = light[0]->getOrthoMatrix();
 	XMFLOAT3 camPos = camera->getPosition();
 
 	// ----- Render Objects with Shadows -----
@@ -314,19 +311,10 @@ void App1::scenePass()
 		}
 	}
 
-	// Debug: Display shadowSRVs 
-	if (debugToggle)
-	{
-		renderer->setZBuffer(false);
-		worldMatrix = renderer->getWorldMatrix();
-		XMMATRIX orthoView = camera->getOrthoViewMatrix();
-		XMMATRIX orthoProj = renderer->getOrthoMatrix();
-
-		debugHUD->sendData(dc);
-		tShader->setShaderParameters(dc, worldMatrix, orthoView, orthoProj, bTex->getShaderResourceView());
-		tShader->render(dc, debugHUD->getIndexCount());
-		renderer->setZBuffer(true);
-	}
+	// Unbind the shadow maps from the pixel shader (t1-t7) so next frame's depth pass
+	// can bind them as depth targets without a read/write hazard
+	ID3D11ShaderResourceView* nullSRVs[MAX_LIGHTS + 2] = { nullptr };
+	dc->PSSetShaderResources(1, MAX_LIGHTS + 1, nullSRVs);
 
 	renderer->setBackBufferRenderTarget();
 }
@@ -342,7 +330,7 @@ void App1::brightPass()
 	renderer->setZBuffer(false);
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();
-	XMMATRIX orthoMatrix = dScaleTex->getOrthoMatrix();
+	XMMATRIX orthoMatrix = renderer->getOrthoMatrix();
 
 	//Render bright areas of the scene only // Change this to new shader when made
 	RenderObject(bShader, screenMesh, [=]() { bShader->setShaderParameters(dc, worldMatrix, orthoViewMatrix, orthoMatrix, screenTex->getShaderResourceView(), bloomLight); });
@@ -361,7 +349,7 @@ void App1::downScalePass()
 	renderer->setZBuffer(false);
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();
-	XMMATRIX orthoMatrix = dScaleTex->getOrthoMatrix();
+	XMMATRIX orthoMatrix = renderer->getOrthoMatrix();
 
 	RenderObject(tShader, screenMesh, [=]() { tShader->setShaderParameters(dc,worldMatrix, orthoViewMatrix, orthoMatrix, bTex->getShaderResourceView()); });
 	renderer->setZBuffer(true);
@@ -380,7 +368,7 @@ void App1::horizontalBlurPass()
 	renderer->setZBuffer(false);
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();
-	XMMATRIX orthoMatrix = hBlurTex->getOrthoMatrix();
+	XMMATRIX orthoMatrix = renderer->getOrthoMatrix();
 
 	RenderObject(hBlurShader, screenMesh, [=]() { hBlurShader->setShaderParameters(dc, worldMatrix, orthoViewMatrix, orthoMatrix, dScaleTex->getShaderResourceView(), screenSizeX); });
 	renderer->setZBuffer(true);
@@ -399,7 +387,7 @@ void App1::verticalBlurPass()
 	renderer->setZBuffer(false);
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();
-	XMMATRIX orthoMatrix = vBlurTex->getOrthoMatrix();
+	XMMATRIX orthoMatrix = renderer->getOrthoMatrix();
 
 	RenderObject(vBlurShader, screenMesh, [=]() { vBlurShader->setShaderParameters(dc, worldMatrix, orthoViewMatrix, orthoMatrix, hBlurTex->getShaderResourceView(), screenSizeY); });
 	renderer->setZBuffer(true);
@@ -418,7 +406,7 @@ void App1::upScalePass()
 	renderer->setZBuffer(false);
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();
-	XMMATRIX orthoMatrix = uScaleTex->getOrthoMatrix();
+	XMMATRIX orthoMatrix = renderer->getOrthoMatrix();
 
 	RenderObject(tShader, screenMesh, [=]() { tShader->setShaderParameters(dc, worldMatrix, orthoViewMatrix, orthoMatrix, vBlurTex->getShaderResourceView()); });
 	renderer->setZBuffer(true);
@@ -460,6 +448,27 @@ void App1::finalPass()
 			});
 	}
 
+	// Debug HUD: shows one intermediate texture in the corner, for checking and report screenshots.
+	// Drawn here (after the composite) so it never gets fed back into the bloom.
+	ID3D11ShaderResourceView* hudSRV = nullptr;
+	switch (hudView)
+	{
+	case 1: hudSRV = (hudLight >= 0 && hudLight < numLights) ? shadowSRVs[hudLight] : nullptr; break; // null for point lights
+	case 2: hudSRV = bTex->getShaderResourceView();      break;
+	case 3: hudSRV = dScaleTex->getShaderResourceView(); break;
+	case 4: hudSRV = hBlurTex->getShaderResourceView();  break;
+	case 5: hudSRV = vBlurTex->getShaderResourceView();  break;
+	case 6: hudSRV = uScaleTex->getShaderResourceView(); break;
+	default: break;
+	}
+
+	if (hudSRV)
+	{
+		RenderObject(tShader, debugHUD, [=]() {
+			tShader->setShaderParameters(dc, worldMatrix, orthoViewMatrix, orthoMatrix, hudSRV);
+			});
+	}
+
 	renderer->setZBuffer(true);
 }
 
@@ -480,6 +489,19 @@ void App1::gui()
 	ImGui::Checkbox("RGB Normals", &rgbToggle);
 	ImGui::Checkbox("Shadow HUD", &debugToggle);
 	ImGui::Checkbox("Light Spheres", &debugLightToggle);
+
+	// Debug HUD
+	ImGui::Combo("HUD View", &hudView, "Off\0Shadow Map\0Bright Pass\0Downscaled\0Horizontal Blur\0Vertical Blur\0Upscaled\0\0");
+	if (hudView == 1)
+	{
+		ImGui::SliderInt("Shadow Map Light", &hudLight, 0, numLights - 1);
+		if (hudLight >= 0 && hudLight < numLights && !shadowMaps[hudLight])
+			ImGui::Text("(point light - no shadow map)");
+	}
+	else if (hudView >= 2 && !bloomToggle)
+	{
+		ImGui::Text("(enable bloom to update these)");
+	}
 	ImGui::Separator();
 
 	// Bloom 

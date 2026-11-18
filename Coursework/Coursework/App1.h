@@ -109,6 +109,9 @@ private:
 	float rotation;
 	XMFLOAT3 position;
 	SimpleShadowShader* ssShader = nullptr;
+
+	int hudView = 0; // 0 = none, 1 = depth, 2 = bright, 3 = downscale, 4 = hblur, 5 = vblur, 6 = upscale
+	int hudLight = 0; // which light to view in the HUD
 };
 
 #endif
