@@ -487,7 +487,6 @@ void App1::gui()
 	ImGui::Text("Debug");
 	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
 	ImGui::Checkbox("RGB Normals", &rgbToggle);
-	ImGui::Checkbox("Shadow HUD", &debugToggle);
 	ImGui::Checkbox("Light Spheres", &debugLightToggle);
 
 	// Debug HUD
